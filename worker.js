@@ -1,7 +1,7 @@
 const fs = require('fs')
 const expect = require('expect')
 const mock = require('jest-mock')
-const {describe, it, run, resetState} = require('jest-circus')
+const { describe, it, run, resetState, getState } = require('jest-circus')
 
 exports.runTest = async function (testFile) {
   const code = await fs.promises.readFile(testFile, 'utf8')
@@ -10,12 +10,12 @@ exports.runTest = async function (testFile) {
     errorMessage: null,
   }
   try {
-    // resetState()
+    resetState()
     eval(code)
-    const {testResults} = await run()
-    testResult.testResults =testResults 
-    console.log({testResults})
-    testResult.success = testResults.every((r) => !r.errors.length)
+    const { testResults, unhandledErrors } = await run()
+    testResult.testResults = testResults
+    testResult.success =
+      testResults.every((r) => !r.errors.length) && unhandledErrors.length === 0
   } catch (error) {
     testResult.errorMessage = error.message
   }
