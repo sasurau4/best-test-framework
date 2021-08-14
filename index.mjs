@@ -3,7 +3,6 @@ import { cpus } from 'os'
 import { dirname, join } from 'path'
 import { fileURLToPath } from 'url'
 import fs from 'fs'
-import { runTest } from './worker.js'
 import { Worker } from 'jest-worker'
 import chalk from 'chalk'
 import { relative } from 'path'
@@ -22,6 +21,9 @@ const hasteMap = new JestHasteMap.default({
 const { hasteFS } = await hasteMap.build()
 const worker = new Worker(join(root, 'worker.js'), {
   enableWorkerThreads: false,
+  forkOptions: {
+    silent: false,
+  },
 })
 
 const testFiles = hasteFS.matchFilesWithGlob([
